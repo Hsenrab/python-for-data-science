@@ -1,0 +1,592 @@
+{
+  "cells": [
+    {
+      "cell_type": "markdown",
+      "source": [
+        "# Homework 2.1 - Introduction to data handling & visualisation"
+      ],
+      "metadata": {}
+    },
+    {
+      "cell_type": "markdown",
+      "source": [
+        "This first notebook will walk through the basics of using Pandas & Matplotlib for data analysis. To begin, be sure to create a new conda environment using the command: ```conda create -n <env_name> Python=3.x```  before installing any of the packages. Once you have created the conda environment, you should be able to select it from the kernel list in the top-right corner."
+      ],
+      "metadata": {}
+    },
+    {
+      "cell_type": "markdown",
+      "source": [
+        "Most of the functions used in the notebooks will be described with the appropriate comments, but VS Code offers a feature whereby you can hover your cursor over a function and it will describe it's behaviour! I have also created a wiki describing all the functions used in this notebook - see `function-wiki.md`. As a last resort, I advice looking through the difference library documentations found below:\n",
+        "\n",
+        "* Pandas : https://pandas.pydata.org/docs/\n",
+        "* Matplotlib : https://matplotlib.org/stable/index.html\n",
+        "* NumPy : https://numpy.org/doc/"
+      ],
+      "metadata": {}
+    },
+    {
+      "cell_type": "code",
+      "source": [
+        "# Install packages - ensure you have chosen your correct kernel before running this cell!\n",
+        "%pip install pandas\n",
+        "%pip install numpy\n",
+        "%pip install matplotlib"
+      ],
+      "outputs": [
+        {
+          "output_type": "stream",
+          "name": "stdout",
+          "text": "Requirement already satisfied: pandas in /anaconda/envs/jupyter_env/lib/python3.8/site-packages (2.0.2)\nRequirement already satisfied: python-dateutil>=2.8.2 in /anaconda/envs/jupyter_env/lib/python3.8/site-packages (from pandas) (2.8.2)\nRequirement already satisfied: pytz>=2020.1 in /anaconda/envs/jupyter_env/lib/python3.8/site-packages (from pandas) (2023.3)\nRequirement already satisfied: tzdata>=2022.1 in /anaconda/envs/jupyter_env/lib/python3.8/site-packages (from pandas) (2023.3)\nRequirement already satisfied: numpy>=1.20.3 in /anaconda/envs/jupyter_env/lib/python3.8/site-packages (from pandas) (1.24.3)\nRequirement already satisfied: six>=1.5 in /anaconda/envs/jupyter_env/lib/python3.8/site-packages (from python-dateutil>=2.8.2->pandas) (1.16.0)\nNote: you may need to restart the kernel to use updated packages.\nRequirement already satisfied: numpy in /anaconda/envs/jupyter_env/lib/python3.8/site-packages (1.24.3)\nNote: you may need to restart the kernel to use updated packages.\nCollecting matplotlib\n  Downloading matplotlib-3.7.4-cp38-cp38-manylinux_2_12_x86_64.manylinux2010_x86_64.whl (9.2 MB)\n\u001b[2K     \u001b[90m━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━\u001b[0m \u001b[32m9.2/9.2 MB\u001b[0m \u001b[31m90.4 MB/s\u001b[0m eta \u001b[36m0:00:00\u001b[0m:00:01\u001b[0m00:01\u001b[0m\n\u001b[?25hRequirement already satisfied: numpy<2,>=1.20 in /anaconda/envs/jupyter_env/lib/python3.8/site-packages (from matplotlib) (1.24.3)\nCollecting pyparsing>=2.3.1\n  Downloading pyparsing-3.1.1-py3-none-any.whl (103 kB)\n\u001b[2K     \u001b[90m━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━\u001b[0m \u001b[32m103.1/103.1 kB\u001b[0m \u001b[31m15.3 MB/s\u001b[0m eta \u001b[36m0:00:00\u001b[0m\n\u001b[?25hCollecting fonttools>=4.22.0\n  Downloading fonttools-4.47.0-cp38-cp38-manylinux_2_17_x86_64.manylinux2014_x86_64.whl (4.7 MB)\n\u001b[2K     \u001b[90m━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━\u001b[0m \u001b[32m4.7/4.7 MB\u001b[0m \u001b[31m108.0 MB/s\u001b[0m eta \u001b[36m0:00:00\u001b[0m00:01\u001b[0m\n\u001b[?25hRequirement already satisfied: packaging>=20.0 in /anaconda/envs/jupyter_env/lib/python3.8/site-packages (from matplotlib) (23.0)\nCollecting cycler>=0.10\n  Downloading cycler-0.12.1-py3-none-any.whl (8.3 kB)\nRequirement already satisfied: importlib-resources>=3.2.0 in /anaconda/envs/jupyter_env/lib/python3.8/site-packages (from matplotlib) (5.12.0)\nRequirement already satisfied: contourpy>=1.0.1 in /anaconda/envs/jupyter_env/lib/python3.8/site-packages (from matplotlib) (1.1.0)\nCollecting kiwisolver>=1.0.1\n  Downloading kiwisolver-1.4.5-cp38-cp38-manylinux_2_5_x86_64.manylinux1_x86_64.whl (1.2 MB)\n\u001b[2K     \u001b[90m━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━\u001b[0m \u001b[32m1.2/1.2 MB\u001b[0m \u001b[31m66.8 MB/s\u001b[0m eta \u001b[36m0:00:00\u001b[0m\n\u001b[?25hRequirement already satisfied: pillow>=6.2.0 in /anaconda/envs/jupyter_env/lib/python3.8/site-packages (from matplotlib) (9.5.0)\nRequirement already satisfied: python-dateutil>=2.7 in /anaconda/envs/jupyter_env/lib/python3.8/site-packages (from matplotlib) (2.8.2)\nRequirement already satisfied: zipp>=3.1.0 in /anaconda/envs/jupyter_env/lib/python3.8/site-packages (from importlib-resources>=3.2.0->matplotlib) (3.15.0)\nRequirement already satisfied: six>=1.5 in /anaconda/envs/jupyter_env/lib/python3.8/site-packages (from python-dateutil>=2.7->matplotlib) (1.16.0)\nInstalling collected packages: pyparsing, kiwisolver, fonttools, cycler, matplotlib\nSuccessfully installed cycler-0.12.1 fonttools-4.47.0 kiwisolver-1.4.5 matplotlib-3.7.4 pyparsing-3.1.1\nNote: you may need to restart the kernel to use updated packages.\n"
+        }
+      ],
+      "execution_count": 1,
+      "metadata": {
+        "gather": {
+          "logged": 1703107486025
+        }
+      }
+    },
+    {
+      "cell_type": "code",
+      "source": [
+        "import pandas as pd # Import pandas with alias pd, so it is easier to use and refer to.\n",
+        "import numpy as np # Import numpy with alias np, so it is easier to use and refer to.\n",
+        "import matplotlib # Import whole package of matplotlib in order to get version number. Bad practice, see further below."
+      ],
+      "outputs": [],
+      "execution_count": 2,
+      "metadata": {
+        "gather": {
+          "logged": 1703107490851
+        }
+      }
+    },
+    {
+      "cell_type": "code",
+      "source": [
+        "print(f\"Pandas version: {pd.__version__}\")\n",
+        "print(f\"Numpy version: {np.__version__}\")\n",
+        "print(f\"Matplotlib version: {matplotlib.__version__}\")\n",
+        "\n",
+        "import matplotlib.pyplot as plt # Import only pyplot from matplotlib. Good practice, this way you know where the function comes from."
+      ],
+      "outputs": [
+        {
+          "output_type": "stream",
+          "name": "stdout",
+          "text": "Pandas version: 2.0.2\nNumpy version: 1.24.3\nMatplotlib version: 3.7.4\n"
+        }
+      ],
+      "execution_count": 3,
+      "metadata": {
+        "gather": {
+          "logged": 1703107493934
+        }
+      }
+    },
+    {
+      "cell_type": "markdown",
+      "source": [
+        "## Example exploratory data analysis\n",
+        "\n",
+        "This section will explore some basic data analysis on a dataset containing order history found in the `data.csv` file. Please note that this dataset is randomly generated and contains no real-world data or personal information.\n",
+        "\n",
+        "We will first interrogate the data to uncover trends before plotting informative graphs."
+      ],
+      "metadata": {}
+    },
+    {
+      "cell_type": "markdown",
+      "source": [
+        "### Data handling with Pandas\n",
+        "\n",
+        "As covered in the session, pandas is a powerful Python library primarily used for data manipulation and analysis. It provides data structures and functions needed to manipulate structured data, including functions for reading and writing data in a wide variety of formats. With Pandas, you can filter and sort data, perform statistical analysis, and apply data transformations. It's particularly useful for working with numerical tables or time series data. Use-cases include cleaning data, transforming data, visualising data, and much more."
+      ],
+      "metadata": {}
+    },
+    {
+      "cell_type": "code",
+      "source": [
+        "raw_data = pd.read_csv(\"data/data.csv\") # Read in the data using pandas read_csv function. The data is stored in a pandas DataFrame.\n",
+        "\n",
+        "raw_data.head() # Show the first 5 rows of the data."
+      ],
+      "outputs": [
+        {
+          "output_type": "execute_result",
+          "execution_count": 4,
+          "data": {
+            "text/plain": "      order_id order_cost  deal_category  country  \\\n0  UXX58VDI7SD      $7.13              2  Nigeria   \n1  NPO10QWN4TG     $30.39              9   France   \n2  JTK76CIG9CP     $32.94              7  Austria   \n3  RVG43RZL3IR     $18.41              5  Austria   \n4  CXQ11AKY1OT      $7.15              0  Ireland   \n\n                              email  \n0              nec.luctus@yahoo.org  \n1    eleifend.nec.malesuada@aol.net  \n2       facilisis.vitae@outlook.com  \n3   enim.etiam.imperdiet@yahoo.couk  \n4  phasellus.ornare.fusce@yahoo.org  ",
+            "text/html": "<div>\n<style scoped>\n    .dataframe tbody tr th:only-of-type {\n        vertical-align: middle;\n    }\n\n    .dataframe tbody tr th {\n        vertical-align: top;\n    }\n\n    .dataframe thead th {\n        text-align: right;\n    }\n</style>\n<table border=\"1\" class=\"dataframe\">\n  <thead>\n    <tr style=\"text-align: right;\">\n      <th></th>\n      <th>order_id</th>\n      <th>order_cost</th>\n      <th>deal_category</th>\n      <th>country</th>\n      <th>email</th>\n    </tr>\n  </thead>\n  <tbody>\n    <tr>\n      <th>0</th>\n      <td>UXX58VDI7SD</td>\n      <td>$7.13</td>\n      <td>2</td>\n      <td>Nigeria</td>\n      <td>nec.luctus@yahoo.org</td>\n    </tr>\n    <tr>\n      <th>1</th>\n      <td>NPO10QWN4TG</td>\n      <td>$30.39</td>\n      <td>9</td>\n      <td>France</td>\n      <td>eleifend.nec.malesuada@aol.net</td>\n    </tr>\n    <tr>\n      <th>2</th>\n      <td>JTK76CIG9CP</td>\n      <td>$32.94</td>\n      <td>7</td>\n      <td>Austria</td>\n      <td>facilisis.vitae@outlook.com</td>\n    </tr>\n    <tr>\n      <th>3</th>\n      <td>RVG43RZL3IR</td>\n      <td>$18.41</td>\n      <td>5</td>\n      <td>Austria</td>\n      <td>enim.etiam.imperdiet@yahoo.couk</td>\n    </tr>\n    <tr>\n      <th>4</th>\n      <td>CXQ11AKY1OT</td>\n      <td>$7.15</td>\n      <td>0</td>\n      <td>Ireland</td>\n      <td>phasellus.ornare.fusce@yahoo.org</td>\n    </tr>\n  </tbody>\n</table>\n</div>"
+          },
+          "metadata": {}
+        }
+      ],
+      "execution_count": 4,
+      "metadata": {
+        "gather": {
+          "logged": 1703107498361
+        }
+      }
+    },
+    {
+      "cell_type": "code",
+      "source": [
+        "raw_data.columns # Show the column names."
+      ],
+      "outputs": [
+        {
+          "output_type": "execute_result",
+          "execution_count": 5,
+          "data": {
+            "text/plain": "Index(['order_id', 'order_cost', 'deal_category', 'country', 'email'], dtype='object')"
+          },
+          "metadata": {}
+        }
+      ],
+      "execution_count": 5,
+      "metadata": {
+        "gather": {
+          "logged": 1703107500987
+        }
+      }
+    },
+    {
+      "cell_type": "code",
+      "source": [
+        "raw_data['order_id'] # Show the column with the name 'order_id'."
+      ],
+      "outputs": [
+        {
+          "output_type": "execute_result",
+          "execution_count": 6,
+          "data": {
+            "text/plain": "0     UXX58VDI7SD\n1     NPO10QWN4TG\n2     JTK76CIG9CP\n3     RVG43RZL3IR\n4     CXQ11AKY1OT\n         ...     \n95    LTQ72DUF6DY\n96    JMI31EBQ9VP\n97    YSF25ATX4PE\n98    KLS38YMT4EI\n99    UWG53CKG5XH\nName: order_id, Length: 100, dtype: object"
+          },
+          "metadata": {}
+        }
+      ],
+      "execution_count": 6,
+      "metadata": {
+        "gather": {
+          "logged": 1703107504607
+        }
+      }
+    },
+    {
+      "cell_type": "code",
+      "source": [
+        "raw_data.dtypes # Show the data types of each column."
+      ],
+      "outputs": [
+        {
+          "output_type": "execute_result",
+          "execution_count": 7,
+          "data": {
+            "text/plain": "order_id         object\norder_cost       object\ndeal_category     int64\ncountry          object\nemail            object\ndtype: object"
+          },
+          "metadata": {}
+        }
+      ],
+      "execution_count": 7,
+      "metadata": {
+        "gather": {
+          "logged": 1703107509841
+        }
+      }
+    },
+    {
+      "cell_type": "code",
+      "source": [
+        "# First off, let's convert all the columns to the correct data type.\n",
+        "\n",
+        "raw_data_ = raw_data.copy() # Make a copy of the data so we don't overwrite the original.\n",
+        "raw_data_['order_id'] = raw_data['order_id'].apply(lambda x: str(x)) # Convert order_id to string.\n",
+        "raw_data_['order_cost'] = raw_data['order_cost'].apply(lambda x: x[1:]).astype('float64') # Convert order_cost to float, removing the $ sign first using string slicing.\n",
+        "raw_data_['country'] = raw_data['country'].astype('category') # Convert country to category.\n",
+        "raw_data_['email'] = raw_data['email'].apply(lambda x: str(x)) # Convert order_id to string.\n",
+        "\n",
+        "raw_data_.dtypes # Check the data types again."
+      ],
+      "outputs": [
+        {
+          "output_type": "execute_result",
+          "execution_count": 8,
+          "data": {
+            "text/plain": "order_id           object\norder_cost        float64\ndeal_category       int64\ncountry          category\nemail              object\ndtype: object"
+          },
+          "metadata": {}
+        }
+      ],
+      "execution_count": 8,
+      "metadata": {
+        "gather": {
+          "logged": 1703107513074
+        }
+      }
+    },
+    {
+      "cell_type": "code",
+      "source": [
+        "# As is best practice, we should check for missing values as they need to be addressed before we can do any analysis.\n",
+        "\n",
+        "raw_data_.replace('nan', np.nan, inplace=True) # Replace all 'nan' strings with np.nan, best practice for handling missing values as lots of pandas functions can handle np.nan.\n",
+        "for col in raw_data_.columns: # Loop through each column.\n",
+        "    print(f\"{col}: {raw_data_[col].isna().sum()}\") # Check for missing values in each column."
+      ],
+      "outputs": [
+        {
+          "output_type": "stream",
+          "name": "stdout",
+          "text": "order_id: 0\norder_cost: 0\ndeal_category: 0\ncountry: 0\nemail: 4\n"
+        }
+      ],
+      "execution_count": 9,
+      "metadata": {
+        "gather": {
+          "logged": 1703107521041
+        }
+      }
+    },
+    {
+      "cell_type": "code",
+      "source": [
+        "raw_data_.loc[raw_data_['email'].isna(), 'email'] # Check the rows where email is NaN using pd.loc for a conditional selection."
+      ],
+      "outputs": [
+        {
+          "output_type": "execute_result",
+          "execution_count": 10,
+          "data": {
+            "text/plain": "19    NaN\n35    NaN\n89    NaN\n96    NaN\nName: email, dtype: object"
+          },
+          "metadata": {}
+        }
+      ],
+      "execution_count": 10,
+      "metadata": {
+        "gather": {
+          "logged": 1703107536680
+        }
+      }
+    },
+    {
+      "cell_type": "code",
+      "source": [
+        "raw_data_.iloc[[19, 35, 89, 96]] # Check the rows where email is 'nan' using pd.iloc for index reference."
+      ],
+      "outputs": [
+        {
+          "output_type": "execute_result",
+          "execution_count": 11,
+          "data": {
+            "text/plain": "       order_id  order_cost  deal_category    country email\n19  VNE35PXT8FW       32.65              8  Australia   NaN\n35  UJW41QXS3HV       89.21              0      Spain   NaN\n89  JDR87KNQ6TI       20.24              2    Belgium   NaN\n96  JMI31EBQ9VP       43.63              4     Mexico   NaN",
+            "text/html": "<div>\n<style scoped>\n    .dataframe tbody tr th:only-of-type {\n        vertical-align: middle;\n    }\n\n    .dataframe tbody tr th {\n        vertical-align: top;\n    }\n\n    .dataframe thead th {\n        text-align: right;\n    }\n</style>\n<table border=\"1\" class=\"dataframe\">\n  <thead>\n    <tr style=\"text-align: right;\">\n      <th></th>\n      <th>order_id</th>\n      <th>order_cost</th>\n      <th>deal_category</th>\n      <th>country</th>\n      <th>email</th>\n    </tr>\n  </thead>\n  <tbody>\n    <tr>\n      <th>19</th>\n      <td>VNE35PXT8FW</td>\n      <td>32.65</td>\n      <td>8</td>\n      <td>Australia</td>\n      <td>NaN</td>\n    </tr>\n    <tr>\n      <th>35</th>\n      <td>UJW41QXS3HV</td>\n      <td>89.21</td>\n      <td>0</td>\n      <td>Spain</td>\n      <td>NaN</td>\n    </tr>\n    <tr>\n      <th>89</th>\n      <td>JDR87KNQ6TI</td>\n      <td>20.24</td>\n      <td>2</td>\n      <td>Belgium</td>\n      <td>NaN</td>\n    </tr>\n    <tr>\n      <th>96</th>\n      <td>JMI31EBQ9VP</td>\n      <td>43.63</td>\n      <td>4</td>\n      <td>Mexico</td>\n      <td>NaN</td>\n    </tr>\n  </tbody>\n</table>\n</div>"
+          },
+          "metadata": {}
+        }
+      ],
+      "execution_count": 11,
+      "metadata": {
+        "gather": {
+          "logged": 1703107547613
+        }
+      }
+    },
+    {
+      "cell_type": "code",
+      "source": [
+        "clean_data = raw_data_.drop(index=[19, 35, 89, 96]) # Drop the rows where email is 'nan' using the index reference from above.\n",
+        "clean_data = clean_data.reset_index(drop=True) # Reset the index so it is continuous, with no gaps after dropping rows. We now have a clean dataset."
+      ],
+      "outputs": [],
+      "execution_count": 12,
+      "metadata": {
+        "gather": {
+          "logged": 1703107553586
+        }
+      }
+    },
+    {
+      "cell_type": "code",
+      "source": [
+        "# Now we have cleaned the data, we can start some basic analysis.\n",
+        "\n",
+        "clean_data.describe(include='all') # Show basic some descriptive statistics of the data."
+      ],
+      "outputs": [
+        {
+          "output_type": "execute_result",
+          "execution_count": 13,
+          "data": {
+            "text/plain": "           order_id  order_cost  deal_category    country  \\\ncount            96   96.000000      96.000000         96   \nunique           96         NaN            NaN         34   \ntop     UXX58VDI7SD         NaN            NaN  Singapore   \nfreq              1         NaN            NaN          8   \nmean            NaN   49.588021       4.895833        NaN   \nstd             NaN   29.101728       2.739493        NaN   \nmin             NaN    1.350000       0.000000        NaN   \n25%             NaN   25.700000       3.000000        NaN   \n50%             NaN   50.705000       5.000000        NaN   \n75%             NaN   76.965000       7.000000        NaN   \nmax             NaN   99.370000      10.000000        NaN   \n\n                       email  \ncount                     96  \nunique                    96  \ntop     nec.luctus@yahoo.org  \nfreq                       1  \nmean                     NaN  \nstd                      NaN  \nmin                      NaN  \n25%                      NaN  \n50%                      NaN  \n75%                      NaN  \nmax                      NaN  ",
+            "text/html": "<div>\n<style scoped>\n    .dataframe tbody tr th:only-of-type {\n        vertical-align: middle;\n    }\n\n    .dataframe tbody tr th {\n        vertical-align: top;\n    }\n\n    .dataframe thead th {\n        text-align: right;\n    }\n</style>\n<table border=\"1\" class=\"dataframe\">\n  <thead>\n    <tr style=\"text-align: right;\">\n      <th></th>\n      <th>order_id</th>\n      <th>order_cost</th>\n      <th>deal_category</th>\n      <th>country</th>\n      <th>email</th>\n    </tr>\n  </thead>\n  <tbody>\n    <tr>\n      <th>count</th>\n      <td>96</td>\n      <td>96.000000</td>\n      <td>96.000000</td>\n      <td>96</td>\n      <td>96</td>\n    </tr>\n    <tr>\n      <th>unique</th>\n      <td>96</td>\n      <td>NaN</td>\n      <td>NaN</td>\n      <td>34</td>\n      <td>96</td>\n    </tr>\n    <tr>\n      <th>top</th>\n      <td>UXX58VDI7SD</td>\n      <td>NaN</td>\n      <td>NaN</td>\n      <td>Singapore</td>\n      <td>nec.luctus@yahoo.org</td>\n    </tr>\n    <tr>\n      <th>freq</th>\n      <td>1</td>\n      <td>NaN</td>\n      <td>NaN</td>\n      <td>8</td>\n      <td>1</td>\n    </tr>\n    <tr>\n      <th>mean</th>\n      <td>NaN</td>\n      <td>49.588021</td>\n      <td>4.895833</td>\n      <td>NaN</td>\n      <td>NaN</td>\n    </tr>\n    <tr>\n      <th>std</th>\n      <td>NaN</td>\n      <td>29.101728</td>\n      <td>2.739493</td>\n      <td>NaN</td>\n      <td>NaN</td>\n    </tr>\n    <tr>\n      <th>min</th>\n      <td>NaN</td>\n      <td>1.350000</td>\n      <td>0.000000</td>\n      <td>NaN</td>\n      <td>NaN</td>\n    </tr>\n    <tr>\n      <th>25%</th>\n      <td>NaN</td>\n      <td>25.700000</td>\n      <td>3.000000</td>\n      <td>NaN</td>\n      <td>NaN</td>\n    </tr>\n    <tr>\n      <th>50%</th>\n      <td>NaN</td>\n      <td>50.705000</td>\n      <td>5.000000</td>\n      <td>NaN</td>\n      <td>NaN</td>\n    </tr>\n    <tr>\n      <th>75%</th>\n      <td>NaN</td>\n      <td>76.965000</td>\n      <td>7.000000</td>\n      <td>NaN</td>\n      <td>NaN</td>\n    </tr>\n    <tr>\n      <th>max</th>\n      <td>NaN</td>\n      <td>99.370000</td>\n      <td>10.000000</td>\n      <td>NaN</td>\n      <td>NaN</td>\n    </tr>\n  </tbody>\n</table>\n</div>"
+          },
+          "metadata": {}
+        }
+      ],
+      "execution_count": 13,
+      "metadata": {
+        "gather": {
+          "logged": 1703107561925
+        }
+      }
+    },
+    {
+      "cell_type": "code",
+      "source": [
+        "# Let's find the minimum and maximum order cost.\n",
+        "\n",
+        "max_order = clean_data['order_cost'].min() # Find the minimum value in the column\n",
+        "min_order = clean_data['order_cost'].max() # Find the maximum value in the column\n",
+        "\n",
+        "print(f\"Max order: ${max_order}\")\n",
+        "print(f\"Min order: ${min_order}\")"
+      ],
+      "outputs": [
+        {
+          "output_type": "stream",
+          "name": "stdout",
+          "text": "Max order: $1.35\nMin order: $99.37\n"
+        }
+      ],
+      "execution_count": 14,
+      "metadata": {
+        "gather": {
+          "logged": 1703107570874
+        }
+      }
+    },
+    {
+      "cell_type": "code",
+      "source": [
+        "# Let's find the distrubition of deal categories.\n",
+        "\n",
+        "deal_cat_count = clean_data['deal_category'].value_counts() # Count the number of each deal category\n",
+        "print(deal_cat_count) # Print the counts"
+      ],
+      "outputs": [
+        {
+          "output_type": "stream",
+          "name": "stdout",
+          "text": "deal_category\n5     14\n3     14\n9     12\n4     10\n7      9\n8      9\n1      9\n2      7\n6      7\n0      4\n10     1\nName: count, dtype: int64\n"
+        }
+      ],
+      "execution_count": 15,
+      "metadata": {
+        "gather": {
+          "logged": 1703107576050
+        }
+      }
+    },
+    {
+      "cell_type": "code",
+      "source": [
+        "# Let's find the average order cost for each deal category.\n",
+        "\n",
+        "deal_cat_mean = clean_data.groupby('deal_category')['order_cost'].mean() # Group the data by deal category, then find the mean of order cost for each group\n",
+        "print(deal_cat_mean) # Print the means"
+      ],
+      "outputs": [
+        {
+          "output_type": "stream",
+          "name": "stdout",
+          "text": "deal_category\n0     29.220000\n1     41.918889\n2     26.927143\n3     63.802857\n4     39.487000\n5     47.947857\n6     72.037143\n7     59.757778\n8     43.011111\n9     49.198333\n10    98.870000\nName: order_cost, dtype: float64\n"
+        }
+      ],
+      "execution_count": 16,
+      "metadata": {
+        "gather": {
+          "logged": 1703107591616
+        }
+      }
+    },
+    {
+      "cell_type": "code",
+      "source": [
+        "# Let's see each countries single, most common deal category.\n",
+        "\n",
+        "grouped_deal_cat = clean_data.groupby('country')['deal_category'] # Group the data by country\n",
+        "country_deal_cat = grouped_deal_cat.apply(lambda x: x.value_counts().index[0]) # Use a lambda function to find the most common deal category for each country\n",
+        "\n",
+        "print(country_deal_cat) # Print the most common deal category for each country"
+      ],
+      "outputs": [
+        {
+          "output_type": "stream",
+          "name": "stdout",
+          "text": "country\nAustralia             3\nAustria               7\nBelgium               4\nBrazil                7\nCanada                4\nChile                 3\nChina                 9\nColombia              3\nCosta Rica            2\nFrance                9\nGermany               1\nIndia                 9\nIndonesia             7\nIreland               0\nItaly                 8\nMexico                1\nNetherlands           5\nNew Zealand           2\nNigeria               2\nNorway                5\nPakistan              4\nPhilippines           5\nPoland                6\nRussian Federation    9\nSingapore             5\nSouth Africa          4\nSouth Korea           5\nSpain                 1\nSweden                3\nTurkey                4\nUkraine               5\nUnited Kingdom        3\nUnited States         7\nVietnam               8\nName: deal_category, dtype: int64\n"
+        }
+      ],
+      "execution_count": 17,
+      "metadata": {
+        "gather": {
+          "logged": 1703107599689
+        }
+      }
+    },
+    {
+      "cell_type": "markdown",
+      "source": [
+        "### Data visualisation with Matplotlib\n",
+        "\n",
+        "Matplotlib is a powerful Python library used for creating static, animated, and interactive visualisations in Python. It provides an object-oriented API for embedding plots into applications. With Matplotlib, you can generate line plots, scatter plots, bar charts, error charts, histograms, pie charts, and much more with just a few lines of code. It's a great tool for turning complex data into easily understandable visuals!"
+      ],
+      "metadata": {}
+    },
+    {
+      "cell_type": "code",
+      "source": [
+        "# Let's continue on and explore if there is a relationship between order cost and deal category.\n",
+        "\n",
+        "plt.bar(clean_data['deal_category'].unique(), deal_cat_mean) # Plot the mean order cost for each category in a bar chart.\n",
+        "plt.xlabel('Deal Category') # Label the x axis.\n",
+        "plt.ylabel('Mean Order Cost') # Label the y axis.\n",
+        "plt.title('Mean Order Cost by Deal Category') # Title the plot.\n",
+        "plt.show() # Show the plot."
+      ],
+      "outputs": [],
+      "execution_count": null,
+      "metadata": {}
+    },
+    {
+      "cell_type": "code",
+      "source": [
+        "# Let's test the correlation between order cost and deal category using numpy's corrcoef function.\n",
+        "# Note that correlation does not imply causation and is a very basic test of the relationship between two variables.\n",
+        "# For more information on correlation, see https://en.wikipedia.org/wiki/Correlation_and_dependence.\n",
+        "# A value of 0 means no correlation, a value of 1 means perfect correlation, and a value of -1 means perfect negative correlation.\n",
+        "\n",
+        "corr_value = np.corrcoef(clean_data['order_cost'], clean_data['deal_category']) # Find the correlation coefficient between order cost and deal category.\n",
+        "print(f\"Correlation coefficient: {corr_value[0, 1]}\") # Print the correlation coefficient, note that the corrcoef function returns a 2x2 matrix, so we need to index the value we want."
+      ],
+      "outputs": [],
+      "execution_count": null,
+      "metadata": {}
+    },
+    {
+      "cell_type": "code",
+      "source": [
+        "# Let's plot a histogram of the order_cost column, helping us to visualise the distribution of values across the orders.\n",
+        "\n",
+        "plt.hist(clean_data['order_cost'], bins=20) # Plot a histogram of order_cost with 20 bins.\n",
+        "plt.xlabel('Order Cost ($)') # Set the x-axis label.\n",
+        "plt.ylabel('Frequency') # Set the y-axis label.\n",
+        "plt.xticks(rotation=45) # Rotate the x-axis labels by 45 degrees.\n",
+        "plt.xticks(np.arange(0, 100, 5)) # Set the x-axis ticks to be every 5 dollars, as we know the range of values is between 0 and 100 from our previous analysis.\n",
+        "plt.show() # Show the plot."
+      ],
+      "outputs": [],
+      "execution_count": null,
+      "metadata": {}
+    },
+    {
+      "cell_type": "code",
+      "source": [
+        "# Now let's explore the relationship between order_cost and country. \n",
+        "# To being let's look at the number of orders from each country.\n",
+        "\n",
+        "num_orders_country = clean_data['country'].value_counts() # Count the number of orders from each country.\n",
+        "plt.bar(num_orders_country.index, num_orders_country) # Plot a bar chart of the number of orders from each country.\n",
+        "plt.xlabel('Country') # Set the x-axis label\n",
+        "plt.ylabel('Number of orders') # Set the y-axis label\n",
+        "plt.xticks(rotation=90) # Rotate the x-axis labels by 90 degrees\n",
+        "plt.title('Number of orders by country') # Set the title\n",
+        "plt.show() # Show the plot"
+      ],
+      "outputs": [],
+      "execution_count": null,
+      "metadata": {}
+    },
+    {
+      "cell_type": "code",
+      "source": [
+        "mean_order_per_country = clean_data.groupby('country')['order_cost'].mean() # Find the mean order_cost for each country\n",
+        "plt.bar(mean_order_per_country.index, mean_order_per_country) # Plot a bar chart of the mean order_cost for each country\n",
+        "plt.xlabel('Country') # Set the x-axis label\n",
+        "plt.ylabel('Mean Order Cost ($)') # Set the y-axis label\n",
+        "plt.xticks(rotation=90) # Rotate the x-axis labels by 90 degrees\n",
+        "plt.subplots_adjust(bottom=0.4) # Adjust the bottom of the plot to make room for the x-axis labels\n",
+        "plt.show() # Show the plot"
+      ],
+      "outputs": [],
+      "execution_count": null,
+      "metadata": {}
+    },
+    {
+      "cell_type": "code",
+      "source": [
+        "# Let's view the distribution of order_cost by country using a boxplot.\n",
+        "# A box plot shows the distribution of values for each category, as well as the median, interquartile range and outliers.\n",
+        "# In the below plot, the box represents the interquartile range, the line in the middle of the box is the median, the whiskers represent the range of values, and the dots are outliers.\n",
+        "# As some countries have a lot more orders than others, it is difficult to see the distribution of values for each country.\n",
+        "\n",
+        "clean_data.boxplot(column='order_cost', by='country') # Plot a boxplot of order_cost by country\n",
+        "plt.ylabel('Order Cost ($)') # Set the y-axis label\n",
+        "plt.xlabel('Country') # Set the x-axis label\n",
+        "plt.xticks(rotation=90) # Rotate the x-axis labels by 90 degrees\n",
+        "plt.subplots_adjust(bottom=0.4) # Adjust the bottom of the plot to make room for the x-axis labels\n",
+        "plt.suptitle('') # Remove the default super-title\n",
+        "plt.title('Boxplot of Order Cost by Country') # Set the title of the plot\n",
+        "plt.show() # Show the plot"
+      ],
+      "outputs": [],
+      "execution_count": null,
+      "metadata": {}
+    },
+    {
+      "cell_type": "code",
+      "source": [
+        "# Let's plot a boxplot of order_cost by country, but only for the top 5 countries by number of orders.\n",
+        "# This will allow us to see the distribution of values for each country more clearly, as the number of orders is more similar between countries.\n",
+        "\n",
+        "top_5_countries = clean_data['country'].value_counts().index[:5] # Get the top 5 countries by number of orders using the index of the value_counts series and slicing.\n",
+        "clean_data_top_5 = clean_data.loc[clean_data['country'].isin(top_5_countries)] # Filter the data to only include the top 5 countries using pd.loc for a conditional selection and the isin function.\n",
+        "clean_data_top_5.boxplot(column='order_cost', by='country') # Plot a boxplot of order_cost by country.\n",
+        "plt.ylabel('Order Cost ($)') # Set the y-axis label.\n",
+        "plt.xlabel('Country') # Set the x-axis label.\n",
+        "plt.xticks(rotation=90) # Rotate the x-axis labels by 90 degrees.\n",
+        "plt.subplots_adjust(bottom=0.4) # Adjust the bottom of the plot to make room for the x-axis labels.\n",
+        "plt.suptitle('') # Remove the default super-title.\n",
+        "plt.title('Boxplot of Order Cost by Country (Top 5)') # Set the title of the plot.\n",
+        "plt.show() # Show the plot."
+      ],
+      "outputs": [],
+      "execution_count": null,
+      "metadata": {}
+    }
+  ],
+  "metadata": {
+    "kernelspec": {
+      "name": "python3",
+      "language": "python",
+      "display_name": "Python 3 (ipykernel)"
+    },
+    "language_info": {
+      "name": "python",
+      "version": "3.8.5",
+      "mimetype": "text/x-python",
+      "codemirror_mode": {
+        "name": "ipython",
+        "version": 3
+      },
+      "pygments_lexer": "ipython3",
+      "nbconvert_exporter": "python",
+      "file_extension": ".py"
+    },
+    "microsoft": {
+      "ms_spell_check": {
+        "ms_spell_check_language": "en"
+      }
+    },
+    "kernel_info": {
+      "name": "python3"
+    },
+    "nteract": {
+      "version": "nteract-front-end@1.0.0"
+    }
+  },
+  "nbformat": 4,
+  "nbformat_minor": 2
+}
